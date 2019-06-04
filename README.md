@@ -21,10 +21,11 @@ This package only implements open-loop PWM control. It does **not** implement cl
 * **baud** (int) -- baudrate. Default 9600.
 
 ## Subscribers
-* **command** -- a Int32MultiArray containing exactly 4 values.
+* **command** -- a Int32MultiArray containing exactly 4 values. Each value should range from -32768 to 32768 and specify the duty cycle to drive the motor.
 
 ## Publishers
-None.
+* **ticks** -- (Int32MultiArray) Total encoder tick count for the 4 channels.
+* **ticks_diff** -- (Int16MultiArray) Differential tick count for the 4 channels.
 
 ## Services
 None.
