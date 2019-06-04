@@ -11,7 +11,7 @@ Competing solutions to control 4 brushed motors include:
 * Two dumb motor drivers (cheap, $10-$20, but no encoder counters) + 2 dual LS7366R quadrature encoder counters from SuperDroidRobots, which would cost you an obscene $104.
 Nobody except DFRobot seems to understand that a robot this small shouldn't cost $100 for a stupid motor controller, and it is downright **wrong** to cost $104 to count silly encoders.
 
-Programming the STM32 is a little tricky as if you don't get the interrupt priorities correctly it becomes difficult to (a) count encoder ticks, (b) receive data from UART, and (c) PWM drive 8 channels all at the same time. This package solves that for you.
+Programming the STM32 is a little tricky as if you don't get the interrupt priorities correctly it becomes difficult to (a) count encoder ticks, (b) receive data from UART, and (c) PWM drive 4 H-bridges or 8 channels all at the same time. This package solves that for you.
 
 This package only implements open-loop PWM control. It does **not** implement closed-loop PID control of the motors. You can implement that in ROS with much more flexibility than you have on the STM32, and incorporate other (e.g. IMU) data if you do that part on the ROS stack instead of in firmware.
 
