@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+
+import ctypes
+import rospy
+import serial
+import time
+
+from std_msgs.msg import Int16MultiArray, Int32MultiArray, MultiArrayDimension
+
+def on_command(msg):
+  if len(msg.data) != 4:
+      rospy.logwarn("bad command")
+      return
+
+  for i in range(4):
+      motor_set(i, param_flip[i] * msg.data[i])
+
+
+def motor_set(channel, value):
+  global ser
+  cmd = bytes([0xF0, 0x47, channel, (value & 0xFF00) >> 8, value & 0xFF, 0, 0, 0, 0])
+
+  checksum = (cmd[1] + cmd[2] + cmd[3] + cmd[4]) % 255
+  cmd += bytes([checksum])
+  ser.write(cmd)
+  ser.flush()
+
+ticks = [0, 0, 0, 0]
+msg_ticks = Int32MultiArray()
+msg_ticks.data = [0, 0, 0, 0]
+msg_ticks_diff = Int16MultiArray()
+msg_ticks_diff.data = [0, 0, 0, 0]
+
+def process_packet(packet):
+    global encoder, msg_ticks, msg_ticks_diff, ticks
+    if sum(packet[0:8]) % 255 != packet[8]:
+        return # checksum error
+
+    if packet[0] == 0x45: # encoder data
+        ticks_diff = [
+            param_flip[i] * ctypes.c_int8(packet[i+1]).value for i in range(4)
+        ]
+
+        ticks = [
+            ticks[i] + ticks_diff[i] for i in range(4)
+        ]
+
+        msg_ticks_diff.data = ticks_diff
+        pub_ticks_diff.publish(msg_ticks_diff)
+        msg_ticks.data = ticks
+        pub_ticks.publish(msg_ticks)
+
+if __name__ == "__main__":
+    rospy.init_node("motor_node")
+
+    param_mapping = rospy.get_param("~mapping", "RR,RL,FR,FL") # not implemented
+    param_flip = [1 if c == "0" else -1 for c in rospy.get_param("~flip", "0101")]
+    param_device = rospy.get_param("~device", "/dev/ttyTHS1")
+    param_baudrate = rospy.get_param("~baudrate", 115200)
+    ser = serial.Serial(param_device, baudrate = param_baudrate, timeout = 0)
+    sub_command = rospy.Subscriber("command", Int16MultiArray, on_command)
+
+    pub_ticks = rospy.Publisher("ticks", Int32MultiArray, queue_size = 1)
+    pub_ticks_diff = rospy.Publisher("ticks_diff", Int16MultiArray, queue_size = 1)
+
+
+    if not ser:
+        rospy.logwarn("could not open serial port")
+        exit(0)
+
+    buf = bytes([])
+
+    rate = rospy.Rate(100)
+    while not rospy.is_shutdown():
+        rate.sleep()
+        while(ser.in_waiting >= 10):
+            c = ser.read()
+            if c == b'\xF0':
+                packet = ser.read(9)
+                process_packet(packet)
+
+    ser.close()
