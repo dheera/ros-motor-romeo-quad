@@ -9,7 +9,7 @@ This is the only reasonably-priced 4-channel brushed motor controller I could fi
 Competing solutions to control 4 brushed motors include:
 * Two 2x7A RoboClaws which would cost you an insane $164.
 * Two dumb motor drivers (cheap, $10-$20, but no encoder counters) + 2 dual LS7366R quadrature encoder counters from SuperDroidRobots, which would cost you an obscene $104.
-Nobody except DFRobot seems to understand that a robot this small shouldn't cost $100 for a stupid motor controller.
+Nobody except DFRobot seems to understand that a robot this small shouldn't cost $100 for a stupid motor controller, and it is downright **wrong** to cost $104 to count silly encoders.
 
 Programming the STM32 is a little tricky as if you don't get the interrupt priorities correctly it becomes difficult to count encoder ticks.
 
