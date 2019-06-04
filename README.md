@@ -13,7 +13,7 @@ Nobody except DFRobot seems to understand that a robot this small shouldn't cost
 
 Programming the STM32 is a little tricky as if you don't get the interrupt priorities correctly it becomes difficult to count encoder ticks and receive data from UART at the same time. This package solves that for you.
 
-This package does **not** implement closed-loop PID control of the motors. You can implement that in ROS with much more flexibility than you have on the STM32, and incorporate other (e.g. IMU) data if you do that part on the ROS stack instead of in firmware.
+This package only implements open-loop PWM control. It does **not** implement closed-loop PID control of the motors. You can implement that in ROS with much more flexibility than you have on the STM32, and incorporate other (e.g. IMU) data if you do that part on the ROS stack instead of in firmware.
 
 ## Parameters:
 
