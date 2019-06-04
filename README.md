@@ -3,6 +3,7 @@
 This is a ROS node for the Romeo BLE Quad and corresponding code for the STM32 on the Romeo BLE Quad.
 It enables controlling 4 motors and read all encoder data via TTL serial.
 
+This is the only reasonably-priced 4-channel brushed motor controller I could find, and useful for small low-power indoor mecanum-drive robots. It's not very high power but it's priced right at $40. (Two 2x7A RoboClaws would cost you an insane $164).
 * [Romeo BLE Quad](https://www.dfrobot.com/product-1563.html)
 
 ## Parameters:
