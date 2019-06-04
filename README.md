@@ -24,7 +24,7 @@ This package only implements open-loop PWM control. It does **not** implement cl
 * **command** -- a Int32MultiArray containing exactly 4 values. Each value should range from -32768 to 32768 and specify the duty cycle to drive the motor.
 
 ## Publishers
-* **ticks** -- (Int32MultiArray) Total encoder tick count for the 4 channels.
+* **ticks** -- (Int32MultiArray) Total encoder tick count for the 4 channels since the node was started. CAUTION: This will reset to 0 if the node is killed and restarted. Mind this when you write any odometry-related logic.
 * **ticks_diff** -- (Int16MultiArray) Differential tick count for the 4 channels.
 
 ## Services
