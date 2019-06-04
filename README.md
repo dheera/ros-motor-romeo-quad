@@ -3,8 +3,17 @@
 This is a ROS node for the Romeo BLE Quad and corresponding code for the STM32 on the Romeo BLE Quad.
 It enables controlling 4 motors and read all encoder data via TTL serial.
 
-This is the only reasonably-priced 4-channel brushed motor controller I could find, and useful for small low-power indoor mecanum-drive robots. It's not very high power but it's priced right at $40. (Two 2x7A RoboClaws would cost you an insane $164).
+This is the only reasonably-priced 4-channel brushed motor controller I could find, and useful for small low-power indoor mecanum-drive robots. It's not very high power but it's priced right at $40. 
 * [Romeo BLE Quad](https://www.dfrobot.com/product-1563.html)
+
+Competing solutions to control 4 brushed motors include:
+* Two 2x7A RoboClaws which would cost you an insane $164.
+* Two dumb motor drivers (cheap, $10-$20, but no encoder counters) + 2 dual LS7366R quadrature encoder counters from SuperDroidRobots, which would cost you an obscene $104.
+Nobody except DFRobot seems to understand that a robot this small shouldn't cost $100 for a stupid motor controller.
+
+Programming the STM32 is a little tricky as if you don't get the interrupt priorities correctly it becomes difficult to count encoder ticks.
+
+This package does **not** implement closed-loop PID control of the motors. You can implement that in ROS with much more flexibility than you have on the STM32, and incorporate other (e.g. IMU) data if you do that part on the ROS stack instead of in firmware.
 
 ## Parameters:
 
