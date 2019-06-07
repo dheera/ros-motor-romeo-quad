@@ -2,15 +2,17 @@
 // and output encoder data for all 4 motors
 // via TTL serial
 
+// PWM code based on code in Romeo BLE Quad Wiki with modifications
+
 #include "stdlib.h"
 #include "Arduino.h"
 
 typedef struct {
-        uint32_t RCC_APBPeriph_GPIO;    ///<GPIO clock
-        uint32_t RCC_APBPeriph_TIM;     ///<timer clock
-        uint32_t pin;                   ///<GPIO pin
-        GPIO_TypeDef *GPIO;             ///<GPIO
-        TIM_TypeDef *TIM;               ///<TIMER
+        uint32_t RCC_APBPeriph_GPIO;    // GPIO clock
+        uint32_t RCC_APBPeriph_TIM;     // timer clock
+        uint32_t pin;                   // GPIO pin
+        GPIO_TypeDef *GPIO;             // GPIO
+        TIM_TypeDef *TIM;               // TIMER
 } EncoderIO;
 
 EncoderIO encoderIO[4]= {
@@ -20,22 +22,22 @@ EncoderIO encoderIO[4]= {
   {RCC_APB2Periph_GPIOC,RCC_APB2Periph_TIM8,GPIO_Pin_6 | GPIO_Pin_7,GPIOC,TIM8}
 };
 
-unsigned char dut[4]; ///< PWM value
-unsigned char conter; ///< Counter every 1ms up plus 1, range 0-255
-unsigned char PWMFlag;///< PWM logo, used to determine which one you should use IO
+unsigned char dut[4]; // PWM value
+unsigned char counter; // 0-255 counter that increments by 1 every 1ms
+unsigned char PWMFlag;
 
 void TIM5_IRQHandler(void)
 {              
   TIM5->SR = ~0x0001;
-  conter++;
+  counter++;
     
   if(PWMFlag & 0x01){
     if(!(PWMFlag & 0x10)){
       GPIO_ResetBits(GPIOC, GPIO_Pin_11);
     }else{
-      if(conter<dut[0]){
+      if(counter<dut[0]){
         GPIO_SetBits(GPIOC, GPIO_Pin_11);
-      }else if(conter!=255){
+      }else if(counter!=255){
         GPIO_ResetBits(GPIOC, GPIO_Pin_11);
       }
     }
@@ -43,9 +45,9 @@ void TIM5_IRQHandler(void)
       if(!(PWMFlag & 0x10)){
         GPIO_ResetBits(GPIOC, GPIO_Pin_12);
       }else{
-        if(conter<dut[0]){
+        if(counter<dut[0]){
           GPIO_SetBits(GPIOC, GPIO_Pin_12);
-        }else if(conter!=255){
+        }else if(counter!=255){
           GPIO_ResetBits(GPIOC, GPIO_Pin_12);
         }
       }
@@ -55,9 +57,9 @@ void TIM5_IRQHandler(void)
     if(!(PWMFlag & 0x20)){
       GPIO_ResetBits(GPIOA, GPIO_Pin_11);
     }else{
-      if(conter<dut[1]){
+      if(counter<dut[1]){
         GPIO_SetBits(GPIOA, GPIO_Pin_11);
-      }else if(conter!=255){
+      }else if(counter!=255){
         GPIO_ResetBits(GPIOA, GPIO_Pin_11);
       }
     }
@@ -65,9 +67,9 @@ void TIM5_IRQHandler(void)
       if(!(PWMFlag & 0x20)){
         GPIO_ResetBits(GPIOC, GPIO_Pin_10);
       }else{
-        if(conter<dut[1]){
+        if(counter<dut[1]){
           GPIO_SetBits(GPIOC, GPIO_Pin_10);
-        }else if(conter!=255){
+        }else if(counter!=255){
       GPIO_ResetBits(GPIOC, GPIO_Pin_10);
         }
       }
@@ -77,9 +79,9 @@ void TIM5_IRQHandler(void)
       if(!(PWMFlag & 0x40)){
         GPIO_ResetBits(GPIOB,GPIO_Pin_9);
       }else{
-        if(conter<dut[2]){
+        if(counter<dut[2]){
           GPIO_SetBits(GPIOB,GPIO_Pin_9);
-        }else if(conter!=255){
+        }else if(counter!=255){
           GPIO_ResetBits(GPIOB,GPIO_Pin_9);
         }
       }  
@@ -87,9 +89,9 @@ void TIM5_IRQHandler(void)
       if(!(PWMFlag & 0x40)){
         GPIO_ResetBits(GPIOB, GPIO_Pin_8);
       }else{
-        if(conter<dut[2]){
+        if(counter<dut[2]){
             GPIO_SetBits(GPIOB, GPIO_Pin_8);
-        }else if(conter!=255){
+        }else if(counter!=255){
             GPIO_ResetBits(GPIOB, GPIO_Pin_8);
         }
       }
@@ -100,9 +102,9 @@ void TIM5_IRQHandler(void)
       if(!(PWMFlag & 0x80)){
         GPIO_ResetBits(GPIOB,GPIO_Pin_5);
       }else{
-        if(conter<dut[3]){
+        if(counter<dut[3]){
           GPIO_SetBits(GPIOB,GPIO_Pin_5);
-        }else if(conter!=255){
+        }else if(counter!=255){
           GPIO_ResetBits(GPIOB,GPIO_Pin_5);
         }
       }
@@ -110,9 +112,9 @@ void TIM5_IRQHandler(void)
       if(!(PWMFlag & 0x80)){
         GPIO_ResetBits(GPIOD,GPIO_Pin_2);
       }else{
-        if(conter<dut[3]){
+        if(counter<dut[3]){
           GPIO_SetBits(GPIOD,GPIO_Pin_2);
-        }else if(conter!=255){
+        }else if(counter!=255){
           GPIO_ResetBits(GPIOD,GPIO_Pin_2);
         }
       }
