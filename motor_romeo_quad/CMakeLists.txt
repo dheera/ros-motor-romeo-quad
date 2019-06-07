@@ -1,23 +1,24 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(motor_romeo_quad)
 
-add_compile_options(-std=c++11 -li2c)
+find_package(catkin REQUIRED COMPONENTS
+  rospy
+  std_msgs
+)
 
-find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs std_msgs)
+catkin_package(
+#  INCLUDE_DIRS include
+#  LIBRARIES roboteq_transfer_command
+#  CATKIN_DEPENDS roboteq_msgs roscpp rospy std_msgs
+#  DEPENDS system_lib
+)
 
-catkin_package(INCLUDE_DIRS include)
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+)
 
-include_directories(include ${catkin_INCLUDE_DIRS})
-
-add_executable(romeo_quad_node src/romeo_quad_activity.cpp src/romeo_quad_node.cpp)
-
-include_directories(${catkin_INCLUDE_DIRS})
-
-target_link_libraries(romeo_quad_node ${catkin_LIBRARIES})
-
-install(TARGETS romeo_quad_node
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+catkin_install_python(PROGRAMS
+  nodes/romeo_quad_node
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
