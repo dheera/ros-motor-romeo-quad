@@ -20,8 +20,8 @@ This package only implements open-loop PWM control. It does **not** implement cl
 * **device** (string) -- the path to the serial port.
 * **baud** (int) -- baudrate. Default 9600.
 
-## Subscribers
-* **command** -- a Int32MultiArray containing exactly 4 values. Each value should range from -32768 to 32768 and specify the duty cycle to drive the motor.
+## Subscriber
+* **command** -- a Int32MultiArray containing exactly 4 values. Each value should range from -32768 to 32767 inclusive and specify the duty cycle to drive the motor.
 
 ## Publishers
 * **ticks** -- (Int32MultiArray) Total encoder tick count for the 4 channels since the node was started. CAUTION: All 4 channels will reset to 0 if the node is killed and restarted. Mind this when you write any odometry-related logic.
